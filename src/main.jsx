@@ -17,7 +17,7 @@ import {
 import "./styles.css";
 
 const friend = {
-  name: "Sompalli Ramanjulu",
+  name: "Kilari Vani",
   from: "Someone who is lucky to know you",
   song: "/birthday-song.wav",
   photos: [
@@ -37,6 +37,30 @@ const friend = {
       title: "More joy, more cake, more magic",
       src: "Photo4.jpeg",
     },
+    {
+      title: "More joy, more cake, more magic",
+      src: "Photo5.jpeg",
+    },
+    {
+      title: "More joy, more cake, more magic",
+      src: "Photo6.jpeg",
+    },
+    {
+      title: "More joy, more cake, more magic",
+      src: "Photo7.jpeg",
+    },
+    {
+      title: "More joy, more cake, more magic",
+      src: "Photo8.jpeg",
+    },
+    {
+      title: "More joy, more cake, more magic",
+      src: "Photo9.jpeg",
+    },
+    {
+      title: "More joy, more cake, more magic",
+      src: "Photo10.jpeg",
+    }
   ],
   wishes: [
     "May this year bring the calm you deserve, the laughter you love, and the surprises you secretly hope for.",
