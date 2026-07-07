@@ -1,0 +1,17 @@
+Birthday audio used by this project
+===================================
+
+Current app audio:
+- File: birthday-song.wav
+- Status: locally generated instrumental birthday melody for this personal greeting app.
+- Intended use: safe placeholder birthday music for the web app.
+
+Open public-domain reference checked:
+- "Happy Birthday to You" is listed as public domain in the United States and European Union.
+- Reference: https://en.wikipedia.org/wiki/Happy_Birthday_to_You
+- Wikimedia Commons public-domain audio reference:
+  https://commons.wikimedia.org/wiki/File:Happy_Birthday_to_You.ogg
+
+Note:
+Movie songs, including songs from commercial films, are usually copyrighted.
+Only add them to this app if you already have legal permission to share them publicly.

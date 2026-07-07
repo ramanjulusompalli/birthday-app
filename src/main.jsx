@@ -20,6 +20,10 @@ const friend = {
   name: "Kilari Vani",
   from: "Someone who is lucky to know you",
   song: "/birthday-song.wav",
+  songName: "Birthday celebration music",
+  youtubeSongQuery: "Aho Oka Manasuku Allari Priyudu",
+  youtubeSongVideoId: "dsU-sKfaQ9M",
+  youtubeSongUrl: "https://youtu.be/dsU-sKfaQ9M?si=si8mhVMyweZGeO8I",
   photos: [
     {
       title: "The smile that starts everything",
@@ -196,15 +200,15 @@ function HeroSidePhotos() {
   );
 }
 
-function MusicControl() {
+function MusicControl({ startSignal }) {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [available, setAvailable] = useState(true);
+  const [available, setAvailable] = useState(Boolean(friend.song));
   const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   useEffect(() => {
     const startMusic = async () => {
-      if (!audioRef.current) return;
+      if (!friend.song || !audioRef.current) return;
 
       try {
         audioRef.current.volume = 0.75;
@@ -219,8 +223,30 @@ function MusicControl() {
     startMusic();
   }, []);
 
+  useEffect(() => {
+    if (!startSignal) return;
+
+    const startMusicFromTap = async () => {
+      if (!friend.song || !audioRef.current) return;
+
+      try {
+        audioRef.current.volume = 0.75;
+        await audioRef.current.play();
+        setPlaying(true);
+        setAutoplayBlocked(false);
+      } catch {
+        setAutoplayBlocked(true);
+      }
+    };
+
+    startMusicFromTap();
+  }, [startSignal]);
+
   const toggle = async () => {
-    if (!audioRef.current) return;
+    if (!friend.song || !audioRef.current) {
+      setAvailable(false);
+      return;
+    }
 
     try {
       if (playing) {
@@ -238,14 +264,16 @@ function MusicControl() {
 
   return (
     <div className="music-dock">
-      <audio
-        ref={audioRef}
-        src={friend.song}
-        loop
-        preload="auto"
-        autoPlay
-        onError={() => setAvailable(false)}
-      />
+      {friend.song && (
+        <audio
+          ref={audioRef}
+          src={friend.song}
+          loop
+          preload="auto"
+          autoPlay
+          onError={() => setAvailable(false)}
+        />
+      )}
       <button
         className="icon-button primary"
         onClick={toggle}
@@ -256,12 +284,12 @@ function MusicControl() {
       <div>
         <p>
           {playing
-            ? "Birthday music is playing"
-            : "Tap to play the birthday song"}
+            ? `${friend.songName} is playing`
+            : `Tap to play ${friend.songName}`}
         </p>
         <span>
           {!available
-            ? "Add birthday-song.wav to public folder"
+            ? "Add legal audio file or use YouTube button"
             : autoplayBlocked
               ? "Browser needs one tap to allow sound"
               : "Music starts automatically when allowed"}
@@ -272,9 +300,64 @@ function MusicControl() {
   );
 }
 
+function MobileQuickNav() {
+  return (
+    <nav className="mobile-quick-nav" aria-label="Birthday sections">
+      <a href="#top">
+        <Sparkles size={18} />
+        Start
+      </a>
+      <a href="#gallery">
+        <Camera size={18} />
+        Photos
+      </a>
+      <a href="#wish">
+        <Heart size={18} />
+        Wish
+      </a>
+      <a href="#cake">
+        <Cake size={18} />
+        Cake
+      </a>
+    </nav>
+  );
+}
+
+function WelcomeGate({ onOpen }) {
+  return (
+    <section className="welcome-gate">
+      <div className="welcome-sparkles" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="welcome-photo-ring">
+        {friend.photos.slice(0, 5).map((photo, index) => (
+          <img key={photo.src} src={photo.src} alt="" className={`welcome-photo p${index + 1}`} />
+        ))}
+      </div>
+      <button className="gift-box" onClick={onOpen} aria-label="Open birthday surprise">
+        <span className="gift-lid" />
+        <span className="gift-ribbon vertical" />
+        <span className="gift-ribbon horizontal" />
+        <span className="gift-body" />
+      </button>
+      <div className="welcome-copy">
+        <p>Special birthday surprise for</p>
+        <h2>{friend.name}</h2>
+        <button className="button solid" onClick={onOpen}>
+          <Gift size={20} />
+          Open surprise
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function Hero() {
   return (
-    <section className="hero">
+    <section className="hero" id="top">
       <HeroSidePhotos />
       <div className="hero-content">
         <div className="badge">
@@ -308,6 +391,7 @@ function Hero() {
 function Gallery() {
   const [active, setActive] = useState(0);
   const [slideshowPlaying, setSlideshowPlaying] = useState(true);
+  const [touchStart, setTouchStart] = useState(null);
 
   useEffect(() => {
     if (!slideshowPlaying) return undefined;
@@ -326,6 +410,24 @@ function Gallery() {
     setActive((current) => (current + 1) % friend.photos.length);
   };
 
+  const handleTouchEnd = (event) => {
+    if (touchStart === null) return;
+
+    const touchEnd = event.changedTouches[0].clientX;
+    const distance = touchStart - touchEnd;
+
+    if (Math.abs(distance) > 45) {
+      if (distance > 0) {
+        showNext();
+      } else {
+        showPrevious();
+      }
+      setSlideshowPlaying(false);
+    }
+
+    setTouchStart(null);
+  };
+
   return (
     <section className="section gallery-section" id="gallery">
       <div className="section-heading">
@@ -337,7 +439,11 @@ function Gallery() {
       </div>
 
       <div className="slideshow">
-        <div className="feature-frame slideshow-frame">
+        <div
+          className="feature-frame slideshow-frame"
+          onTouchStart={(event) => setTouchStart(event.touches[0].clientX)}
+          onTouchEnd={handleTouchEnd}
+        >
           {friend.photos.map((photo, index) => (
             <img
               key={photo.src}
@@ -425,12 +531,43 @@ function Wish() {
     </section>
   );
 }
+function YouTubeSongMoment() {
+  const youtubeEmbedUrl = `https://www.youtube.com/embed/${friend.youtubeSongVideoId}?rel=0&playsinline=1`;
+
+  return (
+    <section className="youtube-song-section" id="song">
+      <div className="section-heading light">
+        <span>
+          <Music2 size={18} />
+          Favorite song
+        </span>
+        <h2>Aho Oka Manasuku</h2>
+      </div>
+
+      <div className="youtube-player-shell">
+        <iframe
+          src={youtubeEmbedUrl}
+          title="Aho Oka Manasuku from Allari Priyudu"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+        />
+      </div>
+
+      <a className="button solid youtube-open-button" href={friend.youtubeSongUrl} target="_blank" rel="noreferrer">
+        <Play size={20} />
+        Open song in YouTube
+      </a>
+
+      <p className="youtube-note">YouTube songs cannot autoplay with sound inside mobile browsers.</p>
+    </section>
+  );
+}
 
 function BirthdayCakeMoment() {
   const [candlesBlown, setCandlesBlown] = useState(false);
 
   return (
-    <section className={candlesBlown ? "cake-moment wished" : "cake-moment"}>
+    <section className={candlesBlown ? "cake-moment wished" : "cake-moment"} id="cake">
       <div className="section-heading light">
         <span>
           <Cake size={18} />
@@ -547,13 +684,18 @@ function Finale() {
 }
 
 function App() {
+  const [opened, setOpened] = useState(false);
+
   return (
     <>
+      {!opened && <WelcomeGate onOpen={() => setOpened(true)} />}
       <Confetti />
       <Balloons />
-      <MusicControl />
+      <MusicControl startSignal={opened} />
+      <MobileQuickNav />
       <Hero />
       <Gallery />
+      <YouTubeSongMoment />
       <Wish />
       <BirthdayCakeMoment />
       <SurpriseWall />
