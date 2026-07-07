@@ -19,8 +19,8 @@ import "./styles.css";
 const friend = {
   name: "Kilari Vani",
   from: "Someone who is lucky to know you",
-  song: "/birthday-song.wav",
-  songName: "Birthday celebration music",
+  song: "",
+  songName: "Aho Oka Manasuku",
   youtubeSongQuery: "Aho Oka Manasuku Allari Priyudu",
   youtubeSongVideoId: "dsU-sKfaQ9M",
   youtubeSongUrl: "https://youtu.be/dsU-sKfaQ9M?si=si8mhVMyweZGeO8I",
@@ -201,6 +201,8 @@ function HeroSidePhotos() {
 }
 
 function MusicControl({ startSignal }) {
+  if (!friend.song) return null;
+
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
   const [available, setAvailable] = useState(Boolean(friend.song));

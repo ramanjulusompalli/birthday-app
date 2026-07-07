@@ -9,7 +9,7 @@ Edit `src/main.jsx`:
 - Change `friend.name`
 - Change `friend.from`
 - Replace the sample photo URLs with your own files in `public`
-- The app already includes `public/birthday-song.wav`
+- No inbuilt song is enabled by default
 
 If you have legal permission to use a different song, add it to `public` and update `friend.song`.
 For example:
@@ -20,19 +20,8 @@ song: '/aho-oka-song.mp3'
 
 Do not upload copyrighted movie songs unless you have the right to share them publicly.
 
-The current app uses built-in birthday celebration music:
-
-```text
-public/birthday-song.wav
-```
-
-The app is already configured to play:
-
-```js
-song: '/birthday-song.wav'
-```
-
 The Aho Oka Manasuku movie song is available from the YouTube button inside the app.
+No local/inbuilt song plays automatically.
 
 Example photo path:
 
